@@ -1,0 +1,27 @@
+package com.igor.hospital.domain.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Data;
+
+import javax.management.relation.Role;
+
+@Data
+@Entity
+public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuario")
+    private Integer idUsusario;
+    private String nome;
+    private String email;
+    private String senha;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+}
