@@ -2,16 +2,10 @@ services:
   mysql:
     image: 'mysql:latest'
     environment:
-      - 'MYSQL_DATABASE=mydatabase'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
-      - 'MYSQL_USER=myuser'
+      - 'MYSQL_DATABASE=hospital'
+      - 'MYSQL_PASSWORD=Mudar@1234'
+      - 'MYSQL_ROOT_PASSWORD=Mudar@1234'
+      - 'MYSQL_USER=icastro'
     ports:
-      - '3306'
-  rabbitmq:
-    image: 'rabbitmq:latest'
-    environment:
-      - 'RABBITMQ_DEFAULT_PASS=secret'
-      - 'RABBITMQ_DEFAULT_USER=myuser'
-    ports:
-      - '5672'
+      - '3306:3306'
+

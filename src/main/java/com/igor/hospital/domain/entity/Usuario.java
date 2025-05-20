@@ -9,8 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-import javax.management.relation.Role;
-
 @Data
 @Entity
 public class Usuario {
