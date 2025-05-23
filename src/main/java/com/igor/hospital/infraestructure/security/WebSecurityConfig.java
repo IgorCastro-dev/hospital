@@ -25,6 +25,7 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(request -> {
             request.requestMatchers("/login").permitAll();
             request.requestMatchers(HttpMethod.POST,"/cadastrar").permitAll();
+            request.requestMatchers("/graphql").permitAll();
             request.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
             request.anyRequest().authenticated();
         });
