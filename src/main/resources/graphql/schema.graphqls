@@ -13,10 +13,16 @@ type Usuario {
   role: String!
 }
 
+input ConsultaUpdateDto {
+  data: String!
+  status: String!
+}
+
 type Query {
   consultasPorPaciente(pacienteId: ID!): [Consulta!]!
 }
 
 type Mutation {
   criarConsulta(pacienteId: ID!, medicoId: ID!, dataHora: String!): Consulta!
+  atualizaConsulta(consultaId: ID!,consultaUpdateDto: ConsultaUpdateDto!): Consulta!
 }

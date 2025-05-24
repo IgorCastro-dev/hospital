@@ -2,6 +2,7 @@ package com.igor.hospital.presentation.controller;
 
 import com.igor.hospital.application.service.ConsultaService;
 import com.igor.hospital.domain.entity.Consulta;
+import com.igor.hospital.presentation.dto.ConsultaUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -28,5 +29,13 @@ public class ConsultaGraphQL {
             @Argument String dataHora
     ) {
         return consultaService.criarConsulta(pacienteId, medicoId, dataHora);
+    }
+
+    @MutationMapping
+    public Consulta atualizaConsulta(
+            @Argument Integer consultaId,
+            @Argument ConsultaUpdateDto consultaUpdateDto
+    ) {
+        return consultaService.atualizaConsulta(consultaId,consultaUpdateDto);
     }
 }

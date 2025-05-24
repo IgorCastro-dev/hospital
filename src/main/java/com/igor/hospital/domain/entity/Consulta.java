@@ -2,6 +2,8 @@ package com.igor.hospital.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,6 +33,6 @@ public class Consulta {
     @Column(name = "data_hora", nullable = false)
     private LocalDateTime dataHora;
 
-    @Column(name = "status", nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private StatusConsulta status;
 }
