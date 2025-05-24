@@ -25,7 +25,8 @@ public class AuthenticationService {
                     new UsernamePasswordAuthenticationToken(loginDTO.getEmail(),loginDTO.getPassword());
             var auth = authenticationManager.authenticate(authenticationToken);
             Usuario usuario = (Usuario) auth.getPrincipal();
-            return tokenService.allocateToken(usuario.getUsername());
+            String extendedInfo = usuario.getUsername() + ";" + usuario.getRole();
+            return tokenService.allocateToken(extendedInfo);
         }catch (BadCredentialsException e){
             throw new RuntimeException("Credenciais inválidas.");
         }

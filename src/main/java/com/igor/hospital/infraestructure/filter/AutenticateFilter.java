@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.token.Token;
 import org.springframework.security.core.token.TokenService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -36,11 +38,16 @@ public class AutenticateFilter extends OncePerRequestFilter {
 
     private void autenticate(String key) {
         Token token = tokenService.verifyToken(key);
-        Usuario usuario = usuarioRepository.findByEmail(token.getExtendedInformation())
-                .orElseThrow(()-> new RuntimeException("Usuário não encontrado"));
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(usuario,null,usuario.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        String[] info = token.getExtendedInformation().split(";");
+        String email = info[0];
+        String role = info[1];
+
+        var authorities = List.of(new SimpleGrantedAuthority(role.toUpperCase()));
+
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(email, null, authorities);
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
     private String getToken(HttpServletRequest request) {

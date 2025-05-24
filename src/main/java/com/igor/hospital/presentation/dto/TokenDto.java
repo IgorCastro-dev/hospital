@@ -13,6 +13,7 @@ public class TokenDto implements Token {
     private Long keyCreationTime;
 
     private String usuario;
+    private String role;
 
     @Override
     public String getKey() {
@@ -26,6 +27,6 @@ public class TokenDto implements Token {
 
     @Override
     public String getExtendedInformation() {
-        return this.usuario;
+        return this.usuario + ";" + this.role;
     }
 }
