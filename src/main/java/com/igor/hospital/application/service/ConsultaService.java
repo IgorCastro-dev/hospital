@@ -6,6 +6,7 @@ import com.igor.hospital.domain.entity.StatusConsulta;
 import com.igor.hospital.domain.entity.Usuario;
 import com.igor.hospital.domain.repository.ConsultaRepository;
 import com.igor.hospital.domain.repository.UsuarioRepository;
+import com.igor.hospital.presentation.dto.ConsultaCreateDto;
 import com.igor.hospital.presentation.dto.ConsultaUpdateDto;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ConsultaService {
@@ -23,34 +25,40 @@ public class ConsultaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public List<Consulta> buscarPorPaciente(Integer pacienteId) {
+    public List<Consulta> buscarPorPaciente(Integer pacienteId, Boolean somenteFuturas) {
         Usuario paciente = usuarioRepository.findByIdUsuario(pacienteId).orElseThrow(
                 () -> new RuntimeException("Paciente não encontrado")
         );
-        return consultaRepository.findByIdPaciente(paciente);
+        List<Consulta> consultas = consultaRepository.findByIdPaciente(paciente);
+        if (Boolean.TRUE.equals(somenteFuturas)) {
+            consultas = consultas.stream()
+                    .filter(c -> c.getDataHora().isAfter(LocalDateTime.now()))
+                    .collect(Collectors.toList());
+        }
+        return consultas;
     }
 
     @Transactional
-    public Consulta criarConsulta(Integer pacienteId, Integer medicoId, String dataHoraStr) {
-        Usuario paciente = usuarioRepository.findById(pacienteId)
+    public Consulta criarConsulta(ConsultaCreateDto consultaCreateDto) {
+        Usuario paciente = usuarioRepository.findById(consultaCreateDto.getIdPaciente())
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
 
-        Usuario medico = usuarioRepository.findById(medicoId)
+        Usuario medico = usuarioRepository.findById(consultaCreateDto.getIdMedico())
                 .orElseThrow(() -> new RuntimeException("Médico não encontrado"));
 
 
-        if(medico.getRole() != Role.ROLE_MEDICO){
+        if(!medico.getRole().equals(Role.ROLE_MEDICO)){
             throw new RuntimeException("O Usuario não é um medico");
         }
 
-        if(paciente.getRole() != Role.ROLE_PACIENTE){
+        if(!paciente.getRole().equals(Role.ROLE_PACIENTE)){
             throw new RuntimeException("O Usuario não é um paciente");
         }
 
         Consulta consulta = new Consulta();
         consulta.setIdPaciente(paciente);
         consulta.setIdMedico(medico);
-        consulta.setDataHora(LocalDateTime.parse(dataHoraStr));
+        consulta.setDataHora(consultaCreateDto.getDataHora());
         consulta.setStatus(StatusConsulta.AGENDADA);
 
         return consultaRepository.save(consulta);

@@ -18,11 +18,17 @@ input ConsultaUpdateDto {
   status: String!
 }
 
+input ConsultaCreateDto {
+  idPaciente: ID!
+  idMedico: ID!
+  dataHora: String!
+}
+
 type Query {
-  consultasPorPaciente(pacienteId: ID!): [Consulta!]!
+  consultasPorPaciente(pacienteId: ID!,somenteFuturas: Boolean!): [Consulta!]!
 }
 
 type Mutation {
-  criarConsulta(pacienteId: ID!, medicoId: ID!, dataHora: String!): Consulta!
+  criarConsulta(consultaCreateDto: ConsultaCreateDto!): Consulta!
   atualizaConsulta(consultaId: ID!,consultaUpdateDto: ConsultaUpdateDto!): Consulta!
 }

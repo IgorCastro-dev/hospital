@@ -2,9 +2,9 @@ package com.igor.hospital.presentation.dto;
 
 
 import com.igor.hospital.domain.entity.StatusConsulta;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data

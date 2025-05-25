@@ -1,8 +1,7 @@
 package com.igor.hospital.presentation.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 
 @Data
 public class LoginDto {
