@@ -8,8 +8,10 @@ import com.igor.hospital.domain.repository.ConsultaRepository;
 import com.igor.hospital.domain.repository.UsuarioRepository;
 import com.igor.hospital.presentation.dto.ConsultaCreateDto;
 import com.igor.hospital.presentation.dto.ConsultaUpdateDto;
+import com.igor.hospital.presentation.dto.NotificacaoDto;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,11 +21,17 @@ import java.util.stream.Collectors;
 @Service
 public class ConsultaService {
 
+    @Value("${spring.rabbitmq.queue.notifica}")
+    private String queueNotifica;
+
     @Autowired
     private ConsultaRepository consultaRepository;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private RabbitService rabbitService;
 
     public List<Consulta> buscarPorPaciente(Integer pacienteId, Boolean somenteFuturas) {
         Usuario paciente = usuarioRepository.findByIdUsuario(pacienteId).orElseThrow(
@@ -35,6 +43,7 @@ public class ConsultaService {
                     .filter(c -> c.getDataHora().isAfter(LocalDateTime.now()))
                     .collect(Collectors.toList());
         }
+
         return consultas;
     }
 
@@ -60,6 +69,14 @@ public class ConsultaService {
         consulta.setIdMedico(medico);
         consulta.setDataHora(consultaCreateDto.getDataHora());
         consulta.setStatus(StatusConsulta.AGENDADA);
+
+        NotificacaoDto notificacao = new NotificacaoDto(
+                consulta.getIdPaciente().getEmail(),
+                "Consulta agendada",
+                "Você tem uma consulta marcada para " + consulta.getDataHora()
+        );
+
+        rabbitService.enviaMensagem(queueNotifica,notificacao);
 
         return consultaRepository.save(consulta);
     }
